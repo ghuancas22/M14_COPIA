@@ -1,0 +1,39 @@
+version: "3.9"
+services:
+  # PHP-Apache
+  PHP-Apache:
+    image: php:apache
+    container_name: PHP-Apache
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./www:/var/www/html
+    ports:
+      - 80:80
+    depends_on:
+      - mysql
+  # MySQL
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: bbdduniversitat
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 123
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d:rw
+  # PHPMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - mysql
+    ports:
+      - "90:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: 123
